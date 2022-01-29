@@ -59,6 +59,7 @@ export default function NewGuest() {
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
   const [remove, setRemove] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const baseUrl = 'http://localhost:4000';
   // make different component for each task
@@ -73,7 +74,10 @@ export default function NewGuest() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ firstName: firstName, lastName: lastName }),
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+      }),
     });
     const createdGuest = await response.json();
     console.log(createdGuest);
@@ -85,13 +89,13 @@ export default function NewGuest() {
   // get all Guests
 
   useEffect(() => {
-    const getGuests = async (e) => {
+    const getGuests = async () => {
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
       setGuests(allGuests);
     };
     getGuests();
-  }, [firstName, lastName, remove]);
+  }, [firstName, lastName, remove, checked]);
 
   // Remove guest by id
 
@@ -109,9 +113,26 @@ export default function NewGuest() {
   // Remove all guests
 
   const handleRemoveAll = async () => {
+    // add part for only attending guests
     guests.forEach((element) => {
       handleRemove(element.id);
     });
+  };
+  // change attending status
+
+  // set attending
+
+  const handleChecked = async (id) => {
+    const response = await fetch(`${baseUrl}/guests/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ attending: !checked }),
+    });
+    const updatedGuest = await response.json();
+    setGuests(updatedGuest);
+    setChecked(!checked);
   };
 
   return (
@@ -140,6 +161,16 @@ export default function NewGuest() {
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+              />
+            </label>
+            <label>
+              Attending Status
+              <input
+                are-label="Attending"
+                css={inputStyles}
+                type="checkbox"
+                value={checked}
+                onChange={(id) => setChecked(id.handleChecked)}
               />
             </label>
           </div>
