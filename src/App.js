@@ -5,15 +5,9 @@ import './App.css';
 import NewGuest from './NewGuest';
 
 function App() {
-  const [guests, setGuests] = useState([]);
-
-  const addGuest = (guest) => {
-    console.log(guest);
-  };
-
   return (
     <div>
-      <NewGuest onAdd={addGuest} />
+      <NewGuest />
     </div>
   );
 }
