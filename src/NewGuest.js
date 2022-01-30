@@ -1,22 +1,35 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
   margin-top: 2rem;
   display: flex;
   justify-content: center;
+
   color: white;
   background-color: #8f8f8f;
 `;
-
+const guestDivStyles = css`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  color: white;
+  background-color: #109dcc;
+  padding: 2rem 4rem;
+  border-radius: 1rem;
+  margin: 2rem 0;
+`;
 const buttonStyles = css`
   border-radius: 20px;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 24px;
+
   color: #109dcc;
   font-weight: bold;
+  width: 13rem;
 `;
 
 const formStyles = css`
@@ -36,8 +49,15 @@ const inputStyles = css`
   margin-left: 1rem;
 `;
 const listStyles = css`
-  background-color: #109dcc;
-  color: white;
+  list-style-type: none;
+`;
+const trueAttStyles = css`
+  background-color: green;
+  padding: 10px;
+`;
+const falseAttStyles = css`
+  background-color: red;
+  padding: 10px;
 `;
 
 function List({ children }) {
@@ -47,19 +67,28 @@ function List({ children }) {
 function Guest(props) {
   return (
     <div>
-      <li key={props.id}>
+      <li css={listStyles} key={props.id}>
         Name: {props.firstName} {props.lastName}
       </li>
     </div>
   );
 }
+const Checkbox = ({ label, value, onChange }) => {
+  return (
+    <label>
+      <input type="checkbox" checked={value} onChange={onChange} />
+      {label}
+    </label>
+  );
+};
 
 export default function NewGuest() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
   const [remove, setRemove] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const baseUrl = 'http://localhost:4000';
   // make different component for each task
@@ -69,6 +98,7 @@ export default function NewGuest() {
   // send data to api
   const sendGuest = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const response = await fetch(`${baseUrl}/guests`, {
       method: 'POST',
       headers: {
@@ -77,6 +107,7 @@ export default function NewGuest() {
       body: JSON.stringify({
         firstName: firstName,
         lastName: lastName,
+        attending: isChecked,
       }),
     });
     const createdGuest = await response.json();
@@ -84,6 +115,9 @@ export default function NewGuest() {
     // clean inputs
     setFirstName('');
     setLastName('');
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   // get all Guests
@@ -95,7 +129,7 @@ export default function NewGuest() {
       setGuests(allGuests);
     };
     getGuests();
-  }, [firstName, lastName, remove, checked]);
+  }, [firstName, lastName, remove, isChecked]);
 
   // Remove guest by id
 
@@ -110,29 +144,30 @@ export default function NewGuest() {
     setLastName('');
   };
 
-  // Remove all guests
+  // Remove all attending guests
 
   const handleRemoveAll = async () => {
     // add part for only attending guests
     guests.forEach((element) => {
-      handleRemove(element.id);
+      if (element.attending) {
+        handleRemove(element.id);
+      }
     });
   };
   // change attending status
 
   // set attending
 
-  const handleChecked = async (id) => {
+  const handleAttending = async (id) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ attending: !checked }),
+      body: JSON.stringify({ attending: !isChecked }),
     });
     const updatedGuest = await response.json();
-    setGuests(updatedGuest);
-    setChecked(!checked);
+    setIsChecked(!isChecked);
   };
 
   return (
@@ -163,16 +198,6 @@ export default function NewGuest() {
                 onChange={(e) => setLastName(e.target.value)}
               />
             </label>
-            <label>
-              Attending Status
-              <input
-                are-label="Attending"
-                css={inputStyles}
-                type="checkbox"
-                value={checked}
-                onChange={(id) => setChecked(id.handleChecked)}
-              />
-            </label>
           </div>
           {/* <div className="form-control form-control-check">
         <label>Reminder</label>
@@ -189,34 +214,69 @@ export default function NewGuest() {
           </button>
         </form>
       </div>
-      <div css={listStyles}>
-        <List>
-          {guests.map((guest) => {
-            return (
-              <div key={guest.id + guest.firstName}>
-                <Guest
-                  key={guest.firstName + guest.lastName}
-                  firstName={guest.firstName}
-                  lastName={guest.lastName}
-                  id={guest.id}
-                />
-                <button
-                  aria-label="Remove"
-                  onClick={() => handleRemove(guest.id)}
+      <div css={cardDivStyles}>
+        {isLoading ? (
+          <p>Loading ...</p>
+        ) : (
+          <List>
+            {guests.map((guest) => {
+              return (
+                <div
+                  key={guest.id + guest.firstName + guest.lastName}
+                  css={guestDivStyles}
                 >
-                  Remove
-                </button>
-              </div>
-            );
-          })}
-          <button
-            aria-label="Remove all"
-            onClick={() => handleRemoveAll(guests.id)}
-          >
-            Remove All
-          </button>
-        </List>
+                  <Guest
+                    key={guest.firstName + guest.lastName}
+                    firstName={guest.firstName}
+                    lastName={guest.lastName}
+                    id={guest.id}
+                  />
+                  <button
+                    aria-label="Remove"
+                    onClick={() => handleRemove(guest.id)}
+                    css={buttonStyles}
+                  >
+                    Remove {guest.firstName}
+                  </button>
+                  <label>
+                    {guest.attending ? 'Is Attending' : 'Is not Attending'}
+                    <input
+                      aria-label="Attending"
+                      css={inputStyles}
+                      type="checkbox"
+                      checked={guest.attending}
+                      onChange={(e) => {
+                        setIsChecked(e.currentTarget.checked);
+                        handleAttending(guest.id);
+                      }}
+                    />
+                  </label>
+                </div>
+              );
+            })}
+            <button
+              aria-label="Remove all"
+              onClick={() => handleRemoveAll(guests.id)}
+              css={buttonStyles}
+            >
+              Remove All Attending Guests
+            </button>
+          </List>
+        )}
       </div>
     </>
   );
 }
+
+{
+}
+
+//onChange={() => handleChecked(guest.id)}
+/* <Checkbox
+                  aria-label="Attending"
+                  value={!isChecked}
+                  onChange={(e) => {
+                    setIsChecked(e.target.value);
+                    handleChecked(guest.id);
+                  }}
+                /> */

@@ -14,13 +14,7 @@ const buttonStyles = css`
 export default function DeleteGuest(props) {
   const baseUrl = 'http://localhost:4000';
 
-  const deleteGuest = async ({
-    setFirstName,
-    setLastName,
-    firstName,
-    lastName,
-    id,
-  }) => {
+  const deleteGuest = async ({ setFirstName, setLastName, id }) => {
     const response = await fetch(`${baseUrl}/guests/${props.id}`, {
       method: 'DELETE',
     });
