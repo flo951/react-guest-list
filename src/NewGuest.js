@@ -98,14 +98,16 @@ export default function NewGuest() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
-  const [remove, setRemove] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [remove, setRemove] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const baseUrl = 'http://localhost:4000';
   // make different component for each task
   // try to send data to api
   // get back data to display guests on website
+
+  // useEffect maybe for first render with timeout?
 
   // send data to api
   const sendGuest = async (e) => {
@@ -119,7 +121,6 @@ export default function NewGuest() {
       body: JSON.stringify({
         firstName: firstName,
         lastName: lastName,
-        attending: isChecked,
       }),
     });
     const createdGuest = await response.json();
@@ -141,7 +142,7 @@ export default function NewGuest() {
       setGuests(allGuests);
     };
     getGuests();
-  }, [firstName, lastName, isChecked, remove]);
+  }, [firstName, lastName, remove, isChecked]);
 
   // Remove guest by id
 
@@ -150,6 +151,7 @@ export default function NewGuest() {
       method: 'DELETE',
     });
     const deletedGuest = await response.json();
+    console.log(deletedGuest);
     setRemove(!remove);
     // clean inputs
     setFirstName('');
@@ -158,7 +160,7 @@ export default function NewGuest() {
 
   // Remove all attending guests
 
-  const handleRemoveAll = async () => {
+  const handleRemoveAttending = () => {
     // add part for only attending guests
     guests.forEach((element) => {
       if (element.attending) {
@@ -166,19 +168,19 @@ export default function NewGuest() {
       }
     });
   };
-  // change attending status
 
-  // set attending
+  // set attending & change attending status
 
-  const handleAttending = async (id) => {
+  const handleAttending = async (id, attending) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ attending: !isChecked }),
+      body: JSON.stringify({ attending: !attending }),
     });
     const updatedGuest = await response.json();
+    console.log(updatedGuest);
     setIsChecked(!isChecked);
   };
 
@@ -218,7 +220,7 @@ export default function NewGuest() {
             </button>
             <button
               aria-label="Remove all"
-              onClick={() => handleRemoveAll(guests.id)}
+              onClick={() => handleRemoveAttending(guests.id)}
               css={buttonStyles}
             >
               Remove All Attending Guests
@@ -228,7 +230,7 @@ export default function NewGuest() {
       </div>
       <div css={cardDivStyles}>
         {isLoading ? (
-          <p>Loading ...</p>
+          <h2>Loading ...</h2>
         ) : (
           <List>
             {guests.map((guest) => {
@@ -252,6 +254,7 @@ export default function NewGuest() {
                       Remove
                     </button>
                   </div>
+
                   <label>
                     {guest.attending ? 'Is Attending' : 'Is not Attending'}
                     <input
@@ -259,8 +262,8 @@ export default function NewGuest() {
                       css={inputStyles}
                       type="checkbox"
                       checked={guest.attending}
-                      onChange={() => {
-                        handleAttending(guest.id);
+                      onClick={() => {
+                        handleAttending(guest.id, guest.attending);
                       }}
                     />
                   </label>
