@@ -3,24 +3,40 @@ import { css } from '@emotion/react';
 import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
-  margin-top: 2rem;
+  margin: 2rem 2rem;
   display: flex;
-  justify-content: center;
 
   color: white;
   background-color: #8f8f8f;
+  border-radius: 1rem;
 `;
-const guestDivStyles = css`
+
+const formDivStyles = css`
   margin-top: 2rem;
   display: flex;
   justify-content: center;
-  flex-direction: column;
+  color: white;
+  background-color: #8f8f8f;
+`;
+
+const listDivStyles = css`
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+  color: black;
+`;
+const guestDivStyles = css`
+  margin-top: 1rem;
+  display: flex;
+  width: 29vw;
   gap: 1rem;
   color: white;
   background-color: #109dcc;
-  padding: 2rem 4rem;
+  padding: 1rem 1rem;
   border-radius: 1rem;
-  margin: 2rem 0;
+  margin: 1rem 0;
 `;
 const buttonStyles = css`
   border-radius: 20px;
@@ -29,7 +45,16 @@ const buttonStyles = css`
 
   color: #109dcc;
   font-weight: bold;
-  width: 13rem;
+  width: 10rem;
+  height: 3rem;
+`;
+const addButtonStyles = css`
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  color: #109dcc;
+  font-weight: bold;
 `;
 
 const formStyles = css`
@@ -51,17 +76,12 @@ const inputStyles = css`
 const listStyles = css`
   list-style-type: none;
 `;
-const trueAttStyles = css`
-  background-color: green;
-  padding: 10px;
-`;
-const falseAttStyles = css`
-  background-color: red;
-  padding: 10px;
+const fieldsetStyles = css`
+  border: 0;
 `;
 
 function List({ children }) {
-  return <ul>{children}</ul>;
+  return <ul css={listDivStyles}>{children}</ul>;
 }
 
 function Guest(props) {
@@ -73,14 +93,6 @@ function Guest(props) {
     </div>
   );
 }
-const Checkbox = ({ label, value, onChange }) => {
-  return (
-    <label>
-      <input type="checkbox" checked={value} onChange={onChange} />
-      {label}
-    </label>
-  );
-};
 
 export default function NewGuest() {
   const [firstName, setFirstName] = useState('');
@@ -129,7 +141,7 @@ export default function NewGuest() {
       setGuests(allGuests);
     };
     getGuests();
-  }, [firstName, lastName, remove, isChecked]);
+  }, [firstName, lastName, isChecked, remove]);
 
   // Remove guest by id
 
@@ -173,46 +185,46 @@ export default function NewGuest() {
   return (
     <>
       <div></div>
-      <div css={cardDivStyles} data-test-id="guest">
-        <form css={formStyles} onSubmit={sendGuest}>
-          <div css={divCenter}>
-            <h2>Guest List</h2>
-          </div>
-          <label>
-            First Name
-            <input
-              css={inputStyles}
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />{' '}
-          </label>
-
-          <div className="form-control">
+      <div css={formDivStyles} data-test-id="guest">
+        <fieldset css={fieldsetStyles} disabled={isLoading ? 'disabled' : ''}>
+          <form css={formStyles} onSubmit={sendGuest}>
+            <div css={divCenter}>
+              <h2>Guest List</h2>
+            </div>
             <label>
-              Last Name
+              First Name
               <input
                 css={inputStyles}
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />{' '}
             </label>
-          </div>
-          {/* <div className="form-control form-control-check">
-        <label>Reminder</label>
-        <input
-          type="checkbox"
-          checked={reminder}
-          value={reminder}
-          onChange={(e) => setReminder(e.currentTarget.checked)}
-        />
-      </div> */}
 
-          <button css={buttonStyles} value="Add">
-            Add
-          </button>
-        </form>
+            <div className="form-control">
+              <label>
+                Last Name
+                <input
+                  css={inputStyles}
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </label>
+            </div>
+
+            <button css={addButtonStyles} value="Add">
+              Add
+            </button>
+            <button
+              aria-label="Remove all"
+              onClick={() => handleRemoveAll(guests.id)}
+              css={buttonStyles}
+            >
+              Remove All Attending Guests
+            </button>
+          </form>
+        </fieldset>
       </div>
       <div css={cardDivStyles}>
         {isLoading ? (
@@ -225,19 +237,21 @@ export default function NewGuest() {
                   key={guest.id + guest.firstName + guest.lastName}
                   css={guestDivStyles}
                 >
-                  <Guest
-                    key={guest.firstName + guest.lastName}
-                    firstName={guest.firstName}
-                    lastName={guest.lastName}
-                    id={guest.id}
-                  />
-                  <button
-                    aria-label="Remove"
-                    onClick={() => handleRemove(guest.id)}
-                    css={buttonStyles}
-                  >
-                    Remove {guest.firstName}
-                  </button>
+                  <div>
+                    <Guest
+                      key={guest.firstName + guest.lastName}
+                      firstName={guest.firstName}
+                      lastName={guest.lastName}
+                      id={guest.id}
+                    />
+                    <button
+                      aria-label="Remove"
+                      onClick={() => handleRemove(guest.id)}
+                      css={buttonStyles}
+                    >
+                      Remove
+                    </button>
+                  </div>
                   <label>
                     {guest.attending ? 'Is Attending' : 'Is not Attending'}
                     <input
@@ -245,8 +259,7 @@ export default function NewGuest() {
                       css={inputStyles}
                       type="checkbox"
                       checked={guest.attending}
-                      onChange={(e) => {
-                        setIsChecked(e.currentTarget.checked);
+                      onChange={() => {
                         handleAttending(guest.id);
                       }}
                     />
@@ -254,13 +267,6 @@ export default function NewGuest() {
                 </div>
               );
             })}
-            <button
-              aria-label="Remove all"
-              onClick={() => handleRemoveAll(guests.id)}
-              css={buttonStyles}
-            >
-              Remove All Attending Guests
-            </button>
           </List>
         )}
       </div>
