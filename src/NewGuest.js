@@ -14,6 +14,7 @@ const formDivStyles = css`
   margin: 2rem;
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;
   color: white;
   background-color: #8f8f8f;
@@ -31,7 +32,7 @@ const listDivStyles = css`
 const guestDivStyles = css`
   margin-top: 1rem;
   display: flex;
-  width: 20vw;
+  width: 25vw;
   gap: 1rem;
   color: white;
   background-color: #109dcc;
@@ -58,7 +59,7 @@ const addButtonStyles = css`
 `;
 const buttonSetStyles = css`
   display: flex;
-  width: 50vw;
+  justify-content: space-around;
   gap: 1rem;
 `;
 
@@ -90,6 +91,10 @@ const listStyles = css`
 `;
 const fieldsetStyles = css`
   border: 0;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
 `;
 
 function List({ children }) {
@@ -163,6 +168,7 @@ export default function NewGuest() {
     // clean inputs
     setFirstName('');
     setLastName('');
+    setIsChecked(!isChecked);
   };
 
   // Remove guest by id
@@ -285,7 +291,7 @@ export default function NewGuest() {
           </button>
         </div>
       </fieldset>
-      <br />
+
       <div css={cardDivStyles}>
         {isLoading ? (
           <h2>Loading ...</h2>
