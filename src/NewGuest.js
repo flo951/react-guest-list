@@ -3,20 +3,20 @@ import { css } from '@emotion/react';
 import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
-  margin: 2rem 2rem;
+  margin: 2rem;
   display: flex;
-
   color: white;
   background-color: #8f8f8f;
   border-radius: 1rem;
 `;
 
 const formDivStyles = css`
-  margin-top: 2rem;
+  margin: 2rem;
   display: flex;
   justify-content: center;
   color: white;
   background-color: #8f8f8f;
+  border-radius: 1rem;
 `;
 
 const listDivStyles = css`
@@ -30,7 +30,7 @@ const listDivStyles = css`
 const guestDivStyles = css`
   margin-top: 1rem;
   display: flex;
-  width: 29vw;
+  width: 20vw;
   gap: 1rem;
   color: white;
   background-color: #109dcc;
@@ -42,23 +42,29 @@ const buttonStyles = css`
   border-radius: 20px;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
-
   color: #109dcc;
   font-weight: bold;
-  width: 10rem;
   height: 3rem;
 `;
 const addButtonStyles = css`
   border-radius: 20px;
+  width: 15rem;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
   color: #109dcc;
   font-weight: bold;
 `;
+const buttonSetStyles = css`
+  display: flex;
+  width: 50vw;
+  gap: 1rem;
+`;
 
 const formStyles = css`
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
   flex-direction: column;
   margin: 2rem 0;
@@ -66,10 +72,14 @@ const formStyles = css`
   padding: 2rem 4rem;
   border-radius: 1rem;
 `;
-const divCenter = css`
+const guestRowStyles = css`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+  border-radius: 1rem;
 `;
+
 const inputStyles = css`
   margin-left: 1rem;
 `;
@@ -99,20 +109,42 @@ export default function NewGuest() {
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
-  const [remove, setRemove] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const baseUrl = 'http://localhost:4000';
+  const baseUrl = 'https://guest-list-random951.herokuapp.com';
   // make different component for each task
   // try to send data to api
   // get back data to display guests on website
 
-  // useEffect maybe for first render with timeout?
+  // get all Guests page load, and only after first load
+
+  useEffect(() => {
+    const getGuests = async () => {
+      setIsLoading(true);
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = await response.json();
+      setGuests(allGuests);
+    };
+    getGuests().catch((error) => console.log('get all guests error:' + error));
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  // render page after status change
+  useEffect(() => {
+    const getGuests = async () => {
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = await response.json();
+      setGuests(allGuests);
+    };
+    getGuests().catch((error) => console.log('get all guests error:' + error));
+  }, [isChecked]);
 
   // send data to api
   const sendGuest = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+
     const response = await fetch(`${baseUrl}/guests`, {
       method: 'POST',
       headers: {
@@ -128,21 +160,7 @@ export default function NewGuest() {
     // clean inputs
     setFirstName('');
     setLastName('');
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
   };
-
-  // get all Guests
-
-  useEffect(() => {
-    const getGuests = async () => {
-      const response = await fetch(`${baseUrl}/guests`);
-      const allGuests = await response.json();
-      setGuests(allGuests);
-    };
-    getGuests();
-  }, [firstName, lastName, remove, isChecked]);
 
   // Remove guest by id
 
@@ -152,7 +170,7 @@ export default function NewGuest() {
     });
     const deletedGuest = await response.json();
     console.log(deletedGuest);
-    setRemove(!remove);
+
     // clean inputs
     setFirstName('');
     setLastName('');
@@ -164,9 +182,12 @@ export default function NewGuest() {
     // add part for only attending guests
     guests.forEach((element) => {
       if (element.attending) {
-        handleRemove(element.id);
+        handleRemove(element.id).catch((error) =>
+          console.log('get all guests error:' + error),
+        );
       }
     });
+    setIsChecked(!isChecked);
   };
 
   // set attending & change attending status
@@ -181,18 +202,34 @@ export default function NewGuest() {
     });
     const updatedGuest = await response.json();
     console.log(updatedGuest);
+
     setIsChecked(!isChecked);
+    // setGuests(...guests, updatedGuest);
+    // const newGuests = [...guests, updatedGuest];
+    // to do make change to guests
+    // setGuests(newGuests);
+    // setGuests([...guests, updatedGuest]);
+  };
+
+  const handleShowAttending = () => {
+    const attendingGuests = guests.filter((guest) => guest.attending);
+    console.log(attendingGuests);
+    setGuests(attendingGuests);
+  };
+
+  const handleShowNonAttending = () => {
+    const attendingGuests = guests.filter((guest) => !guest.attending);
+    console.log(attendingGuests);
+    setGuests(attendingGuests);
   };
 
   return (
     <>
-      <div></div>
       <div css={formDivStyles} data-test-id="guest">
         <fieldset css={fieldsetStyles} disabled={isLoading ? 'disabled' : ''}>
           <form css={formStyles} onSubmit={sendGuest}>
-            <div css={divCenter}>
-              <h2>Guest List</h2>
-            </div>
+            <h2>Guest List</h2>
+
             <label>
               First Name
               <input
@@ -203,21 +240,20 @@ export default function NewGuest() {
               />{' '}
             </label>
 
-            <div className="form-control">
-              <label>
-                Last Name
-                <input
-                  css={inputStyles}
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </label>
-            </div>
-
+            <label>
+              Last Name
+              <input
+                css={inputStyles}
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </label>
             <button css={addButtonStyles} value="Add">
               Add
             </button>
+          </form>
+          <div css={buttonSetStyles}>
             <button
               aria-label="Remove all"
               onClick={() => handleRemoveAttending(guests.id)}
@@ -225,7 +261,28 @@ export default function NewGuest() {
             >
               Remove All Attending Guests
             </button>
-          </form>
+            <button
+              aria-label="Show Attending Guests"
+              onClick={() => handleShowAttending(guests.id)}
+              css={buttonStyles}
+            >
+              Show only Attending Guests
+            </button>
+            <button
+              aria-label="Show Non-Attending Guests"
+              onClick={() => handleShowNonAttending(guests.id)}
+              css={buttonStyles}
+            >
+              Show Non Attending Guests
+            </button>
+            <button
+              aria-label="Show All Guests"
+              onClick={() => setIsChecked(!isChecked)}
+              css={buttonStyles}
+            >
+              Show All Guests
+            </button>
+          </div>
         </fieldset>
       </div>
       <div css={cardDivStyles}>
@@ -239,13 +296,26 @@ export default function NewGuest() {
                   key={guest.id + guest.firstName + guest.lastName}
                   css={guestDivStyles}
                 >
-                  <div>
+                  <div css={guestRowStyles}>
                     <Guest
                       key={guest.firstName + guest.lastName}
                       firstName={guest.firstName}
                       lastName={guest.lastName}
                       id={guest.id}
                     />
+
+                    <label>
+                      {guest.attending ? 'Is Attending' : 'Is not Attending'}
+                      <input
+                        aria-label="Attending"
+                        css={inputStyles}
+                        type="checkbox"
+                        checked={guest.attending}
+                        onChange={() => {
+                          handleAttending(guest.id, guest.attending);
+                        }}
+                      />
+                    </label>
                     <button
                       aria-label="Remove"
                       onClick={() => handleRemove(guest.id)}
@@ -254,19 +324,6 @@ export default function NewGuest() {
                       Remove
                     </button>
                   </div>
-
-                  <label>
-                    {guest.attending ? 'Is Attending' : 'Is not Attending'}
-                    <input
-                      aria-label="Attending"
-                      css={inputStyles}
-                      type="checkbox"
-                      checked={guest.attending}
-                      onClick={() => {
-                        handleAttending(guest.id, guest.attending);
-                      }}
-                    />
-                  </label>
                 </div>
               );
             })}
@@ -276,16 +333,3 @@ export default function NewGuest() {
     </>
   );
 }
-
-{
-}
-
-//onChange={() => handleChecked(guest.id)}
-/* <Checkbox
-                  aria-label="Attending"
-                  value={!isChecked}
-                  onChange={(e) => {
-                    setIsChecked(e.target.value);
-                    handleChecked(guest.id);
-                  }}
-                /> */
