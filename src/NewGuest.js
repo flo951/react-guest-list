@@ -153,6 +153,7 @@ export default function NewGuest() {
       body: JSON.stringify({
         firstName: firstName,
         lastName: lastName,
+        attending: false,
       }),
     });
     const createdGuest = await response.json();
@@ -229,7 +230,7 @@ export default function NewGuest() {
             <h2>Guest List</h2>
 
             <label>
-              First Name
+              First name
               <input
                 css={inputStyles}
                 placeholder="First Name"
@@ -239,7 +240,7 @@ export default function NewGuest() {
             </label>
 
             <label>
-              Last Name
+              Last name
               <input
                 css={inputStyles}
                 placeholder="Last Name"
@@ -305,7 +306,7 @@ export default function NewGuest() {
                     <label>
                       {guest.attending ? 'Is Attending' : 'Is not Attending'}
                       <input
-                        aria-label="Attending"
+                        aria-label={`${firstName} ${lastName} attending status`}
                         css={inputStyles}
                         type="checkbox"
                         checked={guest.attending}
@@ -317,7 +318,7 @@ export default function NewGuest() {
                       />
                     </label>
                     <button
-                      aria-label="Remove"
+                      aria-label={`Remove ${firstName} ${lastName}`}
                       onClick={() => handleRemove(guest.id)}
                       css={buttonStyles}
                     >
