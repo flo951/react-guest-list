@@ -13,6 +13,7 @@ const cardDivStyles = css`
 const formDivStyles = css`
   margin: 2rem;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   color: white;
   background-color: #8f8f8f;
@@ -71,6 +72,7 @@ const formStyles = css`
   background-color: #109dcc;
   padding: 2rem 4rem;
   border-radius: 1rem;
+  flex-basis: 100%;
 `;
 const guestRowStyles = css`
   display: flex;
@@ -175,6 +177,7 @@ export default function NewGuest() {
     // clean inputs
     setFirstName('');
     setLastName('');
+    setIsChecked(!isChecked);
   };
 
   // Remove all attending guests
@@ -223,67 +226,66 @@ export default function NewGuest() {
   };
 
   return (
-    <>
-      <div css={formDivStyles} data-test-id="guest">
-        <fieldset css={fieldsetStyles} disabled={isLoading ? 'disabled' : ''}>
-          <form css={formStyles} onSubmit={sendGuest}>
-            <h2>Guest List</h2>
+    <div css={formDivStyles} data-test-id="guest">
+      <fieldset css={fieldsetStyles} disabled={isLoading ? 'disabled' : ''}>
+        <form css={formStyles} onSubmit={sendGuest}>
+          <h2>Guest List</h2>
 
-            <label>
-              First name
-              <input
-                css={inputStyles}
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />{' '}
-            </label>
+          <label>
+            First name
+            <input
+              css={inputStyles}
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />{' '}
+          </label>
 
-            <label>
-              Last name
-              <input
-                css={inputStyles}
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </label>
-            <button css={addButtonStyles} value="Add">
-              Add
-            </button>
-          </form>
-          <div css={buttonSetStyles}>
-            <button
-              aria-label="Remove all"
-              onClick={() => handleRemoveAttending(guests.id)}
-              css={buttonStyles}
-            >
-              Remove All Attending Guests
-            </button>
-            <button
-              aria-label="Show Attending Guests"
-              onClick={() => handleShowAttending(guests.id)}
-              css={buttonStyles}
-            >
-              Show only Attending Guests
-            </button>
-            <button
-              aria-label="Show Non-Attending Guests"
-              onClick={() => handleShowNonAttending(guests.id)}
-              css={buttonStyles}
-            >
-              Show Non Attending Guests
-            </button>
-            <button
-              aria-label="Show All Guests"
-              onClick={() => setIsChecked(!isChecked)}
-              css={buttonStyles}
-            >
-              Show All Guests
-            </button>
-          </div>
-        </fieldset>
-      </div>
+          <label>
+            Last name
+            <input
+              css={inputStyles}
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </label>
+          <button css={addButtonStyles} value="Add">
+            Add
+          </button>
+        </form>
+        <div css={buttonSetStyles}>
+          <button
+            aria-label="Remove all"
+            onClick={() => handleRemoveAttending(guests.id)}
+            css={buttonStyles}
+          >
+            Remove All Attending Guests
+          </button>
+          <button
+            aria-label="Show Attending Guests"
+            onClick={() => handleShowAttending(guests.id)}
+            css={buttonStyles}
+          >
+            Show only Attending Guests
+          </button>
+          <button
+            aria-label="Show Non-Attending Guests"
+            onClick={() => handleShowNonAttending(guests.id)}
+            css={buttonStyles}
+          >
+            Show Non Attending Guests
+          </button>
+          <button
+            aria-label="Show All Guests"
+            onClick={() => setIsChecked(!isChecked)}
+            css={buttonStyles}
+          >
+            Show All Guests
+          </button>
+        </div>
+      </fieldset>
+      <br />
       <div css={cardDivStyles}>
         {isLoading ? (
           <h2>Loading ...</h2>
@@ -331,6 +333,6 @@ export default function NewGuest() {
           </List>
         )}
       </div>
-    </>
+    </div>
   );
 }
