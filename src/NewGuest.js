@@ -125,7 +125,7 @@ export default function NewGuest() {
       const allGuests = await response.json();
       setGuests(allGuests);
     };
-    getGuests().catch((error) => console.log('get all guests error:' + error));
+    getGuests().catch((error) => console.log(error));
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
@@ -138,7 +138,7 @@ export default function NewGuest() {
       const allGuests = await response.json();
       setGuests(allGuests);
     };
-    getGuests().catch((error) => console.log('get all guests error:' + error));
+    getGuests().catch((error) => console.log(error));
   }, [isChecked]);
 
   // send data to api
@@ -182,9 +182,7 @@ export default function NewGuest() {
     // add part for only attending guests
     guests.forEach((element) => {
       if (element.attending) {
-        handleRemove(element.id).catch((error) =>
-          console.log('get all guests error:' + error),
-        );
+        handleRemove(element.id).catch((error) => console.log(error));
       }
     });
     setIsChecked(!isChecked);
@@ -312,7 +310,9 @@ export default function NewGuest() {
                         type="checkbox"
                         checked={guest.attending}
                         onChange={() => {
-                          handleAttending(guest.id, guest.attending);
+                          handleAttending(guest.id, guest.attending).catch(
+                            (error) => console.log(error),
+                          );
                         }}
                       />
                     </label>
