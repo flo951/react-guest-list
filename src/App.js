@@ -302,8 +302,9 @@ export default function App() {
               <div
                 key={guest.id + guest.firstName + guest.lastName}
                 css={guestDivStyles}
+                data-test-id="guest"
               >
-                <div css={guestRowStyles} data-test-id="guest">
+                <div css={guestRowStyles}>
                   <Guest
                     key={guest.firstName + guest.lastName}
                     firstName={guest.firstName}
