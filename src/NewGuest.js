@@ -118,18 +118,17 @@ export default function NewGuest() {
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
   // make different component for each task
   // try to send data to api
   // get back data to display guests on website
 
-  // get all Guests page load, and only after first load
+  // get all Guests on page load
 
   useEffect(() => {
     const getGuests = async () => {
-      setIsLoading(true);
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
       setGuests(allGuests);
@@ -295,7 +294,7 @@ export default function NewGuest() {
       </fieldset>
 
       <div css={cardDivStyles}>
-        {isLoading ? <h3>Loading ...</h3> : null}
+        {isLoading ? <h3>Loading ...</h3> : ''}
         <List>
           {guests.map((guest) => {
             return (
