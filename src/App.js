@@ -294,7 +294,7 @@ export default function App() {
         </div>
       </fieldset>
 
-      <div css={cardDivStyles}>
+      <div css={cardDivStyles} data-test-id="guest">
         <h2>{isLoading ? 'Loading...' : ''}</h2>
         <List>
           {guests.map((guest) => {
@@ -302,7 +302,6 @@ export default function App() {
               <div
                 key={guest.id + guest.firstName + guest.lastName}
                 css={guestDivStyles}
-                data-test-id="guest"
               >
                 <div css={guestRowStyles}>
                   <Guest
