@@ -126,7 +126,6 @@ export default function App() {
   // get back data to display guests on website
 
   // get all Guests on page load
-
   useEffect(() => {
     const getGuests = async () => {
       const response = await fetch(`${baseUrl}/guests`);
@@ -134,10 +133,11 @@ export default function App() {
       setGuests(allGuests);
     };
     getGuests().catch((error) => console.log(error));
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   }, []);
-  setTimeout(() => {
-    setIsLoading(false);
-  }, 500);
+
   // render page after status change
   useEffect(() => {
     const getGuests = async () => {
@@ -293,7 +293,7 @@ export default function App() {
       </fieldset>
 
       <div css={cardDivStyles}>
-        {isLoading ? <h3>Loading ...</h3> : ''}
+        <h2>{isLoading ? 'Loading...' : ''}</h2>
         <List>
           {guests.map((guest) => {
             return (
