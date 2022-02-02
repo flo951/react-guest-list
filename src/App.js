@@ -105,7 +105,7 @@ function List({ children }) {
 
 function Guest(props) {
   return (
-    <div>
+    <div data-test-id="guest">
       <li css={listStyles} key={props.id}>
         Name: {props.firstName} {props.lastName}
       </li>
@@ -302,7 +302,6 @@ export default function App() {
               <div
                 key={guest.id + guest.firstName + guest.lastName}
                 css={guestDivStyles}
-                data-test-id="guest"
               >
                 <div css={guestRowStyles}>
                   <Guest
