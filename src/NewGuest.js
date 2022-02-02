@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
-  margin: 2rem;
+  margin: 1rem;
   display: flex;
   color: white;
   background-color: #8f8f8f;
@@ -11,7 +11,7 @@ const cardDivStyles = css`
 `;
 
 const formDivStyles = css`
-  margin: 2rem;
+  margin: 1rem;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
@@ -22,9 +22,10 @@ const formDivStyles = css`
 `;
 
 const listDivStyles = css`
-  margin-top: 2rem;
+  margin-top: 1rem;
   display: flex;
   flex-wrap: wrap;
+
   justify-content: flex-start;
   gap: 1rem;
   color: black;
@@ -32,7 +33,8 @@ const listDivStyles = css`
 const guestDivStyles = css`
   margin-top: 1rem;
   display: flex;
-  width: 25vw;
+  justify-content: center;
+  width: 275px;
   gap: 1rem;
   color: white;
   background-color: #109dcc;
@@ -69,9 +71,9 @@ const formStyles = css`
   align-items: center;
   gap: 1rem;
   flex-direction: column;
-  margin: 2rem 0;
+  margin: 1rem 0;
   background-color: #109dcc;
-  padding: 2rem 4rem;
+  padding: 1rem 2rem;
   border-radius: 1rem;
   flex-basis: 100%;
 `;
@@ -293,51 +295,48 @@ export default function NewGuest() {
       </fieldset>
 
       <div css={cardDivStyles}>
-        {isLoading ? (
-          <h2>Loading ...</h2>
-        ) : (
-          <List>
-            {guests.map((guest) => {
-              return (
-                <div
-                  key={guest.id + guest.firstName + guest.lastName}
-                  css={guestDivStyles}
-                >
-                  <div css={guestRowStyles}>
-                    <Guest
-                      key={guest.firstName + guest.lastName}
-                      firstName={guest.firstName}
-                      lastName={guest.lastName}
-                      id={guest.id}
-                    />
+        {isLoading ? <h3>Loading ...</h3> : null}
+        <List>
+          {guests.map((guest) => {
+            return (
+              <div
+                key={guest.id + guest.firstName + guest.lastName}
+                css={guestDivStyles}
+              >
+                <div css={guestRowStyles}>
+                  <Guest
+                    key={guest.firstName + guest.lastName}
+                    firstName={guest.firstName}
+                    lastName={guest.lastName}
+                    id={guest.id}
+                  />
 
-                    <label>
-                      {guest.attending ? 'Is Attending' : 'Is not Attending'}
-                      <input
-                        aria-label={`${firstName} ${lastName} attending status`}
-                        css={inputStyles}
-                        type="checkbox"
-                        checked={guest.attending}
-                        onChange={() => {
-                          handleAttending(guest.id, guest.attending).catch(
-                            (error) => console.log(error),
-                          );
-                        }}
-                      />
-                    </label>
-                    <button
-                      aria-label={`Remove ${firstName} ${lastName}`}
-                      onClick={() => handleRemove(guest.id)}
-                      css={buttonStyles}
-                    >
-                      Remove
-                    </button>
-                  </div>
+                  <label>
+                    {guest.attending ? 'Is Attending' : 'Is not Attending'}
+                    <input
+                      aria-label={`${firstName} ${lastName} attending status`}
+                      css={inputStyles}
+                      type="checkbox"
+                      checked={guest.attending}
+                      onChange={() => {
+                        handleAttending(guest.id, guest.attending).catch(
+                          (error) => console.log(error),
+                        );
+                      }}
+                    />
+                  </label>
+                  <button
+                    aria-label={`Remove ${firstName} ${lastName}`}
+                    onClick={() => handleRemove(guest.id)}
+                    css={buttonStyles}
+                  >
+                    Remove
+                  </button>
                 </div>
-              );
-            })}
-          </List>
-        )}
+              </div>
+            );
+          })}
+        </List>
       </div>
     </div>
   );
