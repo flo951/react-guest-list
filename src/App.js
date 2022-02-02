@@ -134,11 +134,10 @@ export default function App() {
       setGuests(allGuests);
     };
     getGuests().catch((error) => console.log(error));
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
   }, []);
-
+  setTimeout(() => {
+    setIsLoading(false);
+  }, 500);
   // render page after status change
   useEffect(() => {
     const getGuests = async () => {
