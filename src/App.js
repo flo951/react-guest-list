@@ -233,7 +233,7 @@ export default function App() {
 
   return (
     <div css={formDivStyles} data-test-id="guest">
-      <fieldset css={fieldsetStyles} disabled={isLoading ? 'disabled' : ''}>
+      <fieldset css={fieldsetStyles}>
         <form css={formStyles} onSubmit={sendGuest}>
           <h2>Guest List</h2>
 
@@ -244,6 +244,7 @@ export default function App() {
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              disabled={isLoading ? 'disabled' : ''}
             />{' '}
           </label>
 
@@ -254,6 +255,7 @@ export default function App() {
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              disabled={isLoading ? 'disabled' : ''}
             />
           </label>
           <button css={addButtonStyles} value="Add">
@@ -301,7 +303,7 @@ export default function App() {
                 key={guest.id + guest.firstName + guest.lastName}
                 css={guestDivStyles}
               >
-                <div css={guestRowStyles}>
+                <div data-test-id="guest" css={guestRowStyles}>
                   <Guest
                     key={guest.firstName + guest.lastName}
                     firstName={guest.firstName}
