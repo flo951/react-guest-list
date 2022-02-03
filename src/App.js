@@ -106,11 +106,9 @@ function List({ children }) {
 
 function Guest(props) {
   return (
-    <div>
-      <li css={listStyles} key={props.id}>
-        Name: {props.firstName} {props.lastName}
-      </li>
-    </div>
+    <li css={listStyles} key={props.id}>
+      Name: {props.firstName} {props.lastName}
+    </li>
   );
 }
 
@@ -179,10 +177,10 @@ export default function App() {
     });
     const deletedGuest = await response.json();
     console.log(deletedGuest);
-    // const copyGuestList = [...guests];
-    // const guestFind = copyGuestList.find((guest) => guest.id === id);
-    // const guestsToDisplay = guests.filter((guest) => guest.id !== guestFind.id);
-    // setGuests(guestsToDisplay);
+    const copyGuestList = [...guests];
+    const guestFind = copyGuestList.find((guest) => guest.id === id);
+    const guestsToDisplay = guests.filter((guest) => guest.id !== guestFind.id);
+    setGuests(guestsToDisplay);
   };
 
   // Remove all attending guests
