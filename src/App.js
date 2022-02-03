@@ -234,13 +234,13 @@ export default function App() {
   // };
 
   const handleShowAttending = () => {
-    const attendingGuests = guests.filter((guest) => guest.attending);
+    const attendingGuests = guests.filter((guest) => !guest.attending);
     console.log(attendingGuests);
     // setNewGuests(attendingGuests);
   };
 
   const handleShowNonAttending = () => {
-    const attendingGuests = guests.filter((guest) => !guest.attending);
+    const attendingGuests = guests.filter((guest) => guest.attending);
     console.log(attendingGuests);
     // setNewGuests(attendingGuests);
   };
@@ -315,8 +315,9 @@ export default function App() {
                 <div
                   key={guest.id + guest.firstName + guest.lastName}
                   css={guestDivStyles}
+                  data-test-id="guest"
                 >
-                  <div css={guestRowStyles} data-test-id="guest">
+                  <div css={guestRowStyles}>
                     <Guest
                       key={guest.firstName + guest.lastName}
                       firstName={guest.firstName}
@@ -327,7 +328,7 @@ export default function App() {
                     <label>
                       {guest.attending ? 'Is Attending' : 'Is not Attending'}
                       <input
-                        aria-label={`${firstName} ${lastName} attending status`}
+                        aria-label="attending status"
                         css={inputStyles}
                         type="checkbox"
                         checked={guest.attending}
@@ -341,7 +342,7 @@ export default function App() {
                       />
                     </label>
                     <button
-                      aria-label={`Remove ${firstName} ${lastName}`}
+                      aria-label="Remove"
                       onClick={() => handleRemove(guest.id)}
                       css={buttonStyles}
                     >
