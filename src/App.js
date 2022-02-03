@@ -91,6 +91,9 @@ const inputStyles = css`
 const listStyles = css`
   list-style-type: none;
 `;
+const loadingStyles = css`
+  color: black;
+`;
 const fieldsetStyles = css`
   border: 0;
   display: flex;
@@ -117,6 +120,7 @@ export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
+  const [newGuests, setNewGuests] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -133,20 +137,18 @@ export default function App() {
       setGuests(allGuests);
     };
     getGuests().catch((error) => console.log(error));
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
-
-  // render page after status change
-  useEffect(() => {
-    const getGuests = async () => {
-      const response = await fetch(`${baseUrl}/guests`);
-      const allGuests = await response.json();
-      setGuests(allGuests);
-    };
-    getGuests().catch((error) => console.log(error));
+    setIsLoading(false);
   }, [isChecked]);
+
+  // // render page after status change
+  // useEffect(() => {
+  //   const getGuests = async () => {
+  //     const response = await fetch(`${baseUrl}/guests`);
+  //     const allGuests = await response.json();
+  //     setGuests(allGuests);
+  //   };
+  //   getGuests().catch((error) => console.log(error));
+  // }, [isChecked]);
 
   // send data to api
   const sendGuest = async (e) => {
@@ -160,7 +162,6 @@ export default function App() {
       body: JSON.stringify({
         firstName: firstName,
         lastName: lastName,
-        attending: false,
       }),
     });
     const createdGuest = await response.json();
@@ -168,21 +169,18 @@ export default function App() {
     // clean inputs
     setFirstName('');
     setLastName('');
-    setIsChecked(!isChecked);
+    const createdGuests = [...guests, createdGuest];
+    setGuests(createdGuests);
   };
 
   // Remove guest by id
-
+  // add another state variable to update removed or filtered guests
   const handleRemove = async (id) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'DELETE',
     });
     const deletedGuest = await response.json();
     console.log(deletedGuest);
-
-    // clean inputs
-    setFirstName('');
-    setLastName('');
     setIsChecked(!isChecked);
   };
 
@@ -199,38 +197,55 @@ export default function App() {
   };
 
   // set attending & change attending status
-
   const handleAttending = async (id, attending) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ attending: !attending }),
+      body: JSON.stringify({ attending: attending }),
     });
     const updatedGuest = await response.json();
     console.log(updatedGuest);
+    // const existingGuests = [...guests];
 
-    setIsChecked(!isChecked);
-    // setGuests(...guests, updatedGuest);
-    // const newGuests = [...guests, updatedGuest];
-    // to do make change to guests
-    // setGuests(newGuests);
-    // setGuests([...guests, updatedGuest]);
+    //  const filterGuests = guests.filter(
+    //    (guest) => guest.id === guestFind.id,
+    //  );
+    // console.log(filterGuests);
+    // remember to copy state zitat jose
+
+    // console.log(updatedGuests);
+
+    // // setGuests(updatedGuests);
+    // setGuests(updatedGuests);
+    const copyGuestList = [...guests];
+    const guestFind = copyGuestList.find((guest) => guest.id === id);
+    guestFind.attending = attending;
+    setGuests(copyGuestList);
   };
+
+  // const handleUpdateAttending = async (id, attending) => {
+  //   const copyGuestList = [...guests];
+  //   const guestFind = copyGuestList.find((guest) => guest.id === id);
+  //   guestFind.attending = attending;
+  //   await handleAttending(guestFind);
+  //   setGuests(copyGuestList);
+  // };
 
   const handleShowAttending = () => {
     const attendingGuests = guests.filter((guest) => guest.attending);
     console.log(attendingGuests);
-    setGuests(attendingGuests);
+    setNewGuests(attendingGuests);
   };
 
   const handleShowNonAttending = () => {
     const attendingGuests = guests.filter((guest) => !guest.attending);
     console.log(attendingGuests);
-    setGuests(attendingGuests);
+    setNewGuests(attendingGuests);
   };
 
+  const handleShowAll = () => {};
   return (
     <div css={formDivStyles} data-test-id="guest">
       <fieldset css={fieldsetStyles}>
@@ -286,7 +301,7 @@ export default function App() {
           </button>
           <button
             aria-label="Show All Guests"
-            onClick={() => setIsChecked(!isChecked)}
+            onClick={() => handleShowAll()}
             css={buttonStyles}
           >
             Show All Guests
@@ -295,7 +310,7 @@ export default function App() {
       </fieldset>
 
       <div css={cardDivStyles} data-test-id="guest">
-        <h2>{isLoading ? 'Loading...' : ''}</h2>
+        <h2 css={loadingStyles}>{isLoading ? 'Loading...' : ''}</h2>
         <List>
           {guests.map((guest) => {
             return (
@@ -318,11 +333,13 @@ export default function App() {
                       css={inputStyles}
                       type="checkbox"
                       checked={guest.attending}
-                      onChange={() => {
-                        handleAttending(guest.id, guest.attending).catch(
-                          (error) => console.log(error),
-                        );
+                      onChange={(e) => {
+                        handleAttending(
+                          guest.id,
+                          e.currentTarget.checked,
+                        ).catch((error) => console.log(error));
                       }}
+                      // onChangeAttending(guest.id, e.currentTarget.checked)
                     />
                   </label>
                   <button
