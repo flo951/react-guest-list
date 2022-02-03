@@ -120,8 +120,8 @@ export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
-  const [newGuests, setNewGuests] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
+  // const [newGuests, setNewGuests] = useState([]);
+  // const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
@@ -138,7 +138,7 @@ export default function App() {
     };
     getGuests().catch((error) => console.log(error));
     setIsLoading(false);
-  }, [isChecked]);
+  }, []);
 
   // // render page after status change
   // useEffect(() => {
@@ -181,7 +181,10 @@ export default function App() {
     });
     const deletedGuest = await response.json();
     console.log(deletedGuest);
-    setIsChecked(!isChecked);
+    const copyGuestList = [...guests];
+    const guestFind = copyGuestList.find((guest) => guest.id === id);
+    const guestsToDisplay = guests.filter((guest) => guest.id !== guestFind.id);
+    setGuests(guestsToDisplay);
   };
 
   // Remove all attending guests
@@ -193,7 +196,6 @@ export default function App() {
         handleRemove(element.id).catch((error) => console.log(error));
       }
     });
-    setIsChecked(!isChecked);
   };
 
   // set attending & change attending status
@@ -236,13 +238,13 @@ export default function App() {
   const handleShowAttending = () => {
     const attendingGuests = guests.filter((guest) => guest.attending);
     console.log(attendingGuests);
-    setNewGuests(attendingGuests);
+    // setNewGuests(attendingGuests);
   };
 
   const handleShowNonAttending = () => {
     const attendingGuests = guests.filter((guest) => !guest.attending);
     console.log(attendingGuests);
-    setNewGuests(attendingGuests);
+    // setNewGuests(attendingGuests);
   };
 
   const handleShowAll = () => {};
