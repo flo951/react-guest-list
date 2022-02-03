@@ -135,9 +135,9 @@ export default function App() {
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
       setGuests(allGuests);
+      setIsLoading(false);
     };
     getGuests().catch((error) => console.log(error));
-    setIsLoading(false);
   }, []);
 
   // // render page after status change
