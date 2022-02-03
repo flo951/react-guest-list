@@ -312,50 +312,53 @@ export default function App() {
       </fieldset>
 
       <div css={cardDivStyles} data-test-id="guest">
-        <h2 css={loadingStyles}>{isLoading ? 'Loading...' : ''}</h2>
-        <List>
-          {guests.map((guest) => {
-            return (
-              <div
-                key={guest.id + guest.firstName + guest.lastName}
-                css={guestDivStyles}
-              >
-                <div css={guestRowStyles}>
-                  <Guest
-                    key={guest.firstName + guest.lastName}
-                    firstName={guest.firstName}
-                    lastName={guest.lastName}
-                    id={guest.id}
-                  />
-
-                  <label>
-                    {guest.attending ? 'Is Attending' : 'Is not Attending'}
-                    <input
-                      aria-label={`${firstName} ${lastName} attending status`}
-                      css={inputStyles}
-                      type="checkbox"
-                      checked={guest.attending}
-                      onChange={(e) => {
-                        handleAttending(
-                          guest.id,
-                          e.currentTarget.checked,
-                        ).catch((error) => console.log(error));
-                      }}
-                      // onChangeAttending(guest.id, e.currentTarget.checked)
+        {isLoading ? (
+          'Loading...'
+        ) : (
+          <List>
+            {guests.map((guest) => {
+              return (
+                <div
+                  key={guest.id + guest.firstName + guest.lastName}
+                  css={guestDivStyles}
+                >
+                  <div css={guestRowStyles}>
+                    <Guest
+                      key={guest.firstName + guest.lastName}
+                      firstName={guest.firstName}
+                      lastName={guest.lastName}
+                      id={guest.id}
                     />
-                  </label>
-                  <button
-                    aria-label={`Remove ${firstName} ${lastName}`}
-                    onClick={() => handleRemove(guest.id)}
-                    css={buttonStyles}
-                  >
-                    Remove
-                  </button>
+
+                    <label>
+                      {guest.attending ? 'Is Attending' : 'Is not Attending'}
+                      <input
+                        aria-label={`${firstName} ${lastName} attending status`}
+                        css={inputStyles}
+                        type="checkbox"
+                        checked={guest.attending}
+                        onChange={(e) => {
+                          handleAttending(
+                            guest.id,
+                            e.currentTarget.checked,
+                          ).catch((error) => console.log(error));
+                        }}
+                        // onChangeAttending(guest.id, e.currentTarget.checked)
+                      />
+                    </label>
+                    <button
+                      aria-label={`Remove ${firstName} ${lastName}`}
+                      onClick={() => handleRemove(guest.id)}
+                      css={buttonStyles}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </List>
+              );
+            })}
+          </List>
+        )}
       </div>
     </div>
   );
