@@ -245,9 +245,9 @@ export default function App() {
     // setNewGuests(attendingGuests);
   };
 
-  const handleShowAll = () => {};
+  // const handleShowAll = () => {};
   return (
-    <div css={formDivStyles} data-test-id="guest">
+    <div css={formDivStyles}>
       <fieldset css={fieldsetStyles}>
         <form css={formStyles} onSubmit={sendGuest}>
           <h2>Guest List</h2>
@@ -299,11 +299,7 @@ export default function App() {
           >
             Show Non Attending Guests
           </button>
-          <button
-            aria-label="Show All Guests"
-            onClick={() => handleShowAll()}
-            css={buttonStyles}
-          >
+          <button aria-label="Show All Guests" css={buttonStyles}>
             Show All Guests
           </button>
         </div>
