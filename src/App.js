@@ -91,9 +91,7 @@ const inputStyles = css`
 const listStyles = css`
   list-style-type: none;
 `;
-const loadingStyles = css`
-  color: black;
-`;
+
 const fieldsetStyles = css`
   border: 0;
   display: flex;
