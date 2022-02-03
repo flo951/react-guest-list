@@ -101,7 +101,11 @@ const fieldsetStyles = css`
 `;
 
 function List({ children }) {
-  return <ul css={listDivStyles}>{children}</ul>;
+  return (
+    <ul css={listDivStyles} data-test-id="guest">
+      {children}
+    </ul>
+  );
 }
 
 function Guest(props) {
@@ -305,7 +309,7 @@ export default function App() {
         </div>
       </fieldset>
 
-      <div css={cardDivStyles} data-test-id="guest">
+      <div css={cardDivStyles}>
         {isLoading ? (
           'Loading...'
         ) : (
