@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
-  margin: 1rem;
+  margin: 2rem;
   display: flex;
   color: white;
   background-color: #8f8f8f;
@@ -11,9 +11,9 @@ const cardDivStyles = css`
 `;
 
 const formDivStyles = css`
-  margin: 1rem;
+  margin: 2rem;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   flex-direction: column;
   justify-content: center;
   color: white;
@@ -25,7 +25,6 @@ const listDivStyles = css`
   margin-top: 1rem;
   display: flex;
   flex-wrap: wrap;
-
   justify-content: flex-start;
   gap: 1rem;
   color: black;
@@ -34,7 +33,7 @@ const guestDivStyles = css`
   margin-top: 1rem;
   display: flex;
   justify-content: center;
-  width: 275px;
+  width: 450px;
   gap: 1rem;
   color: white;
   background-color: #109dcc;
@@ -43,16 +42,16 @@ const guestDivStyles = css`
   margin: 1rem 0;
 `;
 const buttonStyles = css`
-  border-radius: 20px;
+  border-radius: 10px;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
   color: #109dcc;
   font-weight: bold;
-  height: 3rem;
+  padding: 10px;
 `;
 const addButtonStyles = css`
-  border-radius: 20px;
-  width: 15rem;
+  border-radius: 10px;
+  margin: 1rem;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
@@ -63,6 +62,7 @@ const buttonSetStyles = css`
   display: flex;
   justify-content: space-around;
   gap: 1rem;
+  margin: 1rem;
 `;
 
 const formStyles = css`
@@ -75,14 +75,7 @@ const formStyles = css`
   background-color: #109dcc;
   padding: 1rem 2rem;
   border-radius: 1rem;
-  flex-basis: 100%;
-`;
-const guestRowStyles = css`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 1rem 0;
-  border-radius: 1rem;
+  width: 30vw;
 `;
 
 const inputStyles = css`
@@ -90,14 +83,6 @@ const inputStyles = css`
 `;
 const listStyles = css`
   list-style-type: none;
-`;
-
-const fieldsetStyles = css`
-  border: 0;
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
 `;
 
 function List({ children }) {
@@ -170,7 +155,6 @@ export default function App() {
   };
 
   // Remove guest by id
-  // add another state variable to update removed or filtered guests
   const handleRemove = async (id) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'DELETE',
@@ -205,31 +189,11 @@ export default function App() {
     });
     const updatedGuest = await response.json();
     console.log(updatedGuest);
-    // const existingGuests = [...guests];
-
-    //  const filterGuests = guests.filter(
-    //    (guest) => guest.id === guestFind.id,
-    //  );
-    // console.log(filterGuests);
-    // remember to copy state zitat jose
-
-    // console.log(updatedGuests);
-
-    // // setGuests(updatedGuests);
-    // setGuests(updatedGuests);
     const copyGuestList = [...guests];
     const guestFind = copyGuestList.find((guest) => guest.id === id);
     guestFind.attending = attending;
     setGuests(copyGuestList);
   };
-
-  // const handleUpdateAttending = async (id, attending) => {
-  //   const copyGuestList = [...guests];
-  //   const guestFind = copyGuestList.find((guest) => guest.id === id);
-  //   guestFind.attending = attending;
-  //   await handleAttending(guestFind);
-  //   setGuests(copyGuestList);
-  // };
 
   const handleShowAttending = () => {
     const attendingGuests = guests.filter((guest) => !guest.attending);
@@ -245,8 +209,8 @@ export default function App() {
 
   // const handleShowAll = () => {};
   return (
-    <div css={formDivStyles}>
-      <fieldset css={fieldsetStyles}>
+    <>
+      <div css={formDivStyles}>
         <form css={formStyles} onSubmit={sendGuest}>
           <h2>Guest List</h2>
 
@@ -301,8 +265,7 @@ export default function App() {
             Show All Guests
           </button>
         </div>
-      </fieldset>
-
+      </div>
       <div css={cardDivStyles}>
         {isLoading ? (
           'Loading...'
@@ -315,44 +278,42 @@ export default function App() {
                   css={guestDivStyles}
                   data-test-id="guest"
                 >
-                  <div css={guestRowStyles}>
-                    <Guest
-                      key={guest.firstName + guest.lastName}
-                      firstName={guest.firstName}
-                      lastName={guest.lastName}
-                      id={guest.id}
-                    />
+                  <Guest
+                    key={guest.firstName + guest.lastName}
+                    firstName={guest.firstName}
+                    lastName={guest.lastName}
+                    id={guest.id}
+                  />
 
-                    <label>
-                      {guest.attending ? 'Is Attending' : 'Is not Attending'}
-                      <input
-                        aria-label="attending status"
-                        css={inputStyles}
-                        type="checkbox"
-                        checked={guest.attending}
-                        onChange={(e) => {
-                          handleAttending(
-                            guest.id,
-                            e.currentTarget.checked,
-                          ).catch((error) => console.log(error));
-                        }}
-                        // onChangeAttending(guest.id, e.currentTarget.checked)
-                      />
-                    </label>
-                    <button
-                      aria-label="Remove"
-                      onClick={() => handleRemove(guest.id)}
-                      css={buttonStyles}
-                    >
-                      Remove
-                    </button>
-                  </div>
+                  <label>
+                    {guest.attending ? 'Is Attending' : 'Is not Attending'}
+                    <input
+                      aria-label="attending status"
+                      css={inputStyles}
+                      type="checkbox"
+                      checked={guest.attending}
+                      onChange={(e) => {
+                        handleAttending(
+                          guest.id,
+                          e.currentTarget.checked,
+                        ).catch((error) => console.log(error));
+                      }}
+                      // onChangeAttending(guest.id, e.currentTarget.checked)
+                    />
+                  </label>
+                  <button
+                    aria-label="Remove"
+                    onClick={() => handleRemove(guest.id)}
+                    css={buttonStyles}
+                  >
+                    Remove
+                  </button>
                 </div>
               );
             })}
           </List>
         )}
       </div>
-    </div>
+    </>
   );
 }
