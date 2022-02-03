@@ -101,17 +101,13 @@ const fieldsetStyles = css`
 `;
 
 function List({ children }) {
-  return (
-    <ul css={listDivStyles} data-test-id="guest">
-      {children}
-    </ul>
-  );
+  return <ul css={listDivStyles}>{children}</ul>;
 }
 
 function Guest(props) {
   return (
     <div>
-      <li css={listStyles} key={props.id}>
+      <li css={listStyles} key={props.id} data-test-id="guest">
         Name: {props.firstName} {props.lastName}
       </li>
     </div>
