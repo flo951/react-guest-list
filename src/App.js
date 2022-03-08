@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
   margin: 2rem;
-  display: flex;
+
   color: white;
   background-color: #8f8f8f;
   border-radius: 1rem;
@@ -29,6 +29,7 @@ const listDivStyles = css`
   gap: 1rem;
   color: black;
 `;
+
 const guestDivStyles = css`
   margin-top: 1rem;
   display: flex;
@@ -101,14 +102,11 @@ export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
-  // const [newGuests, setNewGuests] = useState([]);
-  // const [isChecked, setIsChecked] = useState(false);
+  const [copyGuests, setCopyGuests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
-  // make different component for each task
-  // try to send data to api
-  // get back data to display guests on website
 
   // get all Guests on page load
   useEffect(() => {
@@ -116,23 +114,19 @@ export default function App() {
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
       setGuests(allGuests);
+      setCopyGuests(allGuests);
       setIsLoading(false);
     };
-    getGuests().catch((error) => console.log(error));
+    getGuests().catch((err) => console.log(err));
   }, []);
-
-  // // render page after status change
-  // useEffect(() => {
-  //   const getGuests = async () => {
-  //     const response = await fetch(`${baseUrl}/guests`);
-  //     const allGuests = await response.json();
-  //     setGuests(allGuests);
-  //   };
-  //   getGuests().catch((error) => console.log(error));
-  // }, [isChecked]);
 
   // send data to api
   const sendGuest = async (e) => {
+    if (firstName === '' || lastName === '') {
+      e.preventDefault();
+      setError('No valid Input');
+      return;
+    }
     e.preventDefault();
 
     const response = await fetch(`${baseUrl}/guests`, {
@@ -146,12 +140,13 @@ export default function App() {
       }),
     });
     const createdGuest = await response.json();
-    console.log(createdGuest);
+
     // clean inputs
     setFirstName('');
     setLastName('');
     const createdGuests = [...guests, createdGuest];
     setGuests(createdGuests);
+    setCopyGuests(createdGuests);
   };
 
   // Remove guest by id
@@ -160,22 +155,11 @@ export default function App() {
       method: 'DELETE',
     });
     const deletedGuest = await response.json();
-    console.log(deletedGuest);
     const copyGuestList = [...guests];
-    const guestFind = copyGuestList.find((guest) => guest.id === id);
+    const guestFind = copyGuestList.find(() => deletedGuest.id === id);
     const guestsToDisplay = guests.filter((guest) => guest.id !== guestFind.id);
     setGuests(guestsToDisplay);
-  };
-
-  // Remove all attending guests
-
-  const handleRemoveAttending = () => {
-    // add part for only attending guests
-    guests.forEach((element) => {
-      if (element.attending) {
-        handleRemove(element.id).catch((error) => console.log(error));
-      }
-    });
+    setCopyGuests(guestsToDisplay);
   };
 
   // set attending & change attending status
@@ -188,26 +172,25 @@ export default function App() {
       body: JSON.stringify({ attending: attending }),
     });
     const updatedGuest = await response.json();
-    console.log(updatedGuest);
     const copyGuestList = [...guests];
     const guestFind = copyGuestList.find((guest) => guest.id === id);
-    guestFind.attending = attending;
+    guestFind.attending = updatedGuest.attending;
     setGuests(copyGuestList);
   };
 
   const handleShowAttending = () => {
-    const attendingGuests = guests.filter((guest) => !guest.attending);
-    console.log(attendingGuests);
-    // setNewGuests(attendingGuests);
+    const attendingGuests = guests.filter((guest) => guest.attending);
+    setGuests(attendingGuests);
   };
 
   const handleShowNonAttending = () => {
-    const attendingGuests = guests.filter((guest) => guest.attending);
-    console.log(attendingGuests);
-    // setNewGuests(attendingGuests);
+    const notAttendingGuests = guests.filter((guest) => !guest.attending);
+    setGuests(notAttendingGuests);
   };
 
-  // const handleShowAll = () => {};
+  const handleShowAll = () => {
+    setGuests(copyGuests);
+  };
   return (
     <>
       <div css={formDivStyles}>
@@ -238,15 +221,9 @@ export default function App() {
           <button css={addButtonStyles} value="Add">
             Add
           </button>
+          <p>{error}</p>
         </form>
         <div css={buttonSetStyles}>
-          <button
-            aria-label="Remove all"
-            onClick={() => handleRemoveAttending(guests.id)}
-            css={buttonStyles}
-          >
-            Remove All Attending Guests
-          </button>
           <button
             aria-label="Show Attending Guests"
             onClick={() => handleShowAttending(guests.id)}
@@ -261,7 +238,11 @@ export default function App() {
           >
             Show Non Attending Guests
           </button>
-          <button aria-label="Show All Guests" css={buttonStyles}>
+          <button
+            aria-label="Show All Guests"
+            css={buttonStyles}
+            onClick={() => handleShowAll(guests.id)}
+          >
             Show All Guests
           </button>
         </div>
@@ -296,7 +277,7 @@ export default function App() {
                         handleAttending(
                           guest.id,
                           e.currentTarget.checked,
-                        ).catch((error) => console.log(error));
+                        ).catch((err) => console.log(err));
                       }}
                       // onChangeAttending(guest.id, e.currentTarget.checked)
                     />
