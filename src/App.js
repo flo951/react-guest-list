@@ -156,7 +156,7 @@ export default function App() {
     });
     const deletedGuest = await response.json();
     const copyGuestList = [...guests];
-    const guestFind = copyGuestList.find(() => deletedGuest.id === id);
+    const guestFind = copyGuestList.find((guest) => guest.id === id);
     const guestsToDisplay = guests.filter((guest) => guest.id !== guestFind.id);
     setGuests(guestsToDisplay);
     setCopyGuests(guestsToDisplay);
