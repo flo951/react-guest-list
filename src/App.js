@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 const cardDivStyles = css`
   margin: 2rem;
-
   color: white;
-  background-color: #8f8f8f;
   border-radius: 1rem;
 `;
 
@@ -17,7 +15,6 @@ const formDivStyles = css`
   flex-direction: column;
   justify-content: center;
   color: white;
-  background-color: #8f8f8f;
   border-radius: 1rem;
 `;
 
@@ -31,13 +28,14 @@ const listDivStyles = css`
 `;
 
 const guestDivStyles = css`
-  margin-top: 1rem;
   display: flex;
-  justify-content: center;
-  width: 450px;
+  flex-direction: column;
+  align-items: center;
+  width: 250px;
   gap: 1rem;
   color: white;
   background-color: #109dcc;
+  border: 2px solid black;
   padding: 1rem 1rem;
   border-radius: 1rem;
   margin: 1rem 0;
@@ -53,6 +51,7 @@ const buttonStyles = css`
 const addButtonStyles = css`
   border-radius: 10px;
   margin: 1rem;
+  padding: 6px;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
@@ -77,10 +76,13 @@ const formStyles = css`
   padding: 1rem 2rem;
   border-radius: 1rem;
   width: 30vw;
+  border: 2px solid black;
 `;
 
 const inputStyles = css`
   margin-left: 1rem;
+  padding: 6px;
+  font-size: 14px;
 `;
 const listStyles = css`
   list-style-type: none;
@@ -101,11 +103,10 @@ function Guest(props) {
 export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [guests, setGuests] = useState([]);
-  const [copyGuests, setCopyGuests] = useState([]);
+  const [guests, setGuests] = useState();
+  const [copyGuests, setCopyGuests] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
 
   // get all Guests on page load
@@ -165,6 +166,19 @@ export default function App() {
     setCopyGuests(guestsToDisplay);
   };
 
+  const handleRemoveAllAttending = () => {
+    guests.map(async (guest) => {
+      guest.attending &&
+        (await fetch(`${baseUrl}/guests/${guest.id}`, {
+          method: 'DELETE',
+        }));
+
+      return !guest.attending && guest;
+    });
+    const notAttendingGuests = guests.filter((guest) => !guest.attending);
+    setGuests(notAttendingGuests);
+  };
+
   // set attending & change attending status
   const handleAttending = async (id, attending) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
@@ -222,7 +236,7 @@ export default function App() {
             />
           </label>
           <button css={addButtonStyles} value="Add">
-            Add
+            Add Guest
           </button>
           <p>{error}</p>
         </form>
@@ -247,6 +261,13 @@ export default function App() {
             onClick={() => handleShowAll(guests.id)}
           >
             Show All Guests
+          </button>
+          <button
+            aria-label="Show All Guests"
+            css={buttonStyles}
+            onClick={() => handleRemoveAllAttending()}
+          >
+            Remove Attending
           </button>
         </div>
       </div>
@@ -282,7 +303,6 @@ export default function App() {
                           e.currentTarget.checked,
                         ).catch((err) => console.log(err));
                       }}
-                      // onChangeAttending(guest.id, e.currentTarget.checked)
                     />
                   </label>
                   <button
