@@ -126,7 +126,8 @@ export default function App() {
   useEffect(() => {
     const getGuests = async () => {
       const response = await fetch(`${baseUrl}/guests`);
-      const allGuests = await response.json();
+      const allGuests = (await response.json()) as Guest[];
+      console.log(allGuests);
       setGuests(allGuests);
       setCopyGuests(allGuests);
       setIsLoading(false);
@@ -139,7 +140,7 @@ export default function App() {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'DELETE',
     });
-    const deletedGuest = await response.json();
+    const deletedGuest = (await response.json()) as Guest;
 
     const copyGuestList = [...guests];
     const guestFind = copyGuestList.find(
@@ -215,7 +216,7 @@ export default function App() {
                 lastName: lastName,
               }),
             });
-            const createdGuest = await response.json();
+            const createdGuest = (await response.json()) as Guest;
 
             // clean inputs
             setFirstName('');
