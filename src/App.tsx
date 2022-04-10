@@ -135,7 +135,7 @@ export default function App() {
   }, []);
 
   // Remove guest by id
-  const handleRemove = async (id: number) => {
+  const deleteGuest = async (id: number) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'DELETE',
     });
@@ -322,7 +322,7 @@ export default function App() {
                   </label>
                   <button
                     aria-label="Remove"
-                    onClick={() => handleRemove(guest.id)}
+                    onClick={() => deleteGuest(guest.id)}
                     css={buttonStyles}
                   >
                     Remove
