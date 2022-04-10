@@ -98,7 +98,7 @@ type Props = {
   lastName: string;
 };
 
-function Guest(props: Props) {
+function GuestList(props: Props) {
   return (
     <li css={listStyles} key={props.id}>
       Name: {props.firstName} {props.lastName}
@@ -128,7 +128,7 @@ export default function App() {
   }, []);
 
   // send data to api
-  const sendGuest = async (e) => {
+  const sendGuest = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (firstName === '' || lastName === '') {
       e.preventDefault();
       setError('No valid Input');
@@ -151,13 +151,15 @@ export default function App() {
     // clean inputs
     setFirstName('');
     setLastName('');
+    console.log(guests);
     const createdGuests = [...guests, createdGuest];
+    console.log(createdGuests);
     setGuests(createdGuests);
     setCopyGuests(createdGuests);
   };
 
   // Remove guest by id
-  const handleRemove = async (id) => {
+  const handleRemove = async (id: number) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'DELETE',
     });
@@ -289,7 +291,7 @@ export default function App() {
                   css={guestDivStyles}
                   data-test-id="guest"
                 >
-                  <Guest
+                  <GuestList
                     key={guest.firstName + guest.lastName}
                     firstName={guest.firstName}
                     lastName={guest.lastName}
