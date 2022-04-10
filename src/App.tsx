@@ -258,14 +258,14 @@ export default function App() {
         <div css={buttonSetStyles}>
           <button
             aria-label="Show Attending Guests"
-            onClick={() => handleShowAttending(guests.id)}
+            onClick={() => handleShowAttending()}
             css={buttonStyles}
           >
             Show only Attending Guests
           </button>
           <button
             aria-label="Show Non-Attending Guests"
-            onClick={() => handleShowNonAttending(guests.id)}
+            onClick={() => handleShowNonAttending()}
             css={buttonStyles}
           >
             Show Non Attending Guests
@@ -273,7 +273,7 @@ export default function App() {
           <button
             aria-label="Show All Guests"
             css={buttonStyles}
-            onClick={() => handleShowAll(guests.id)}
+            onClick={() => handleShowAll()}
           >
             Show All Guests
           </button>
