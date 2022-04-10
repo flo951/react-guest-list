@@ -92,7 +92,13 @@ function List({ children }) {
   return <ul css={listDivStyles}>{children}</ul>;
 }
 
-function Guest(props) {
+type Props = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
+
+function Guest(props: Props) {
   return (
     <li css={listStyles} key={props.id}>
       Name: {props.firstName} {props.lastName}
@@ -103,8 +109,8 @@ function Guest(props) {
 export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [guests, setGuests] = useState();
-  const [copyGuests, setCopyGuests] = useState();
+  const [guests, setGuests] = useState([]);
+  const [copyGuests, setCopyGuests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
@@ -221,7 +227,7 @@ export default function App() {
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              disabled={isLoading ? 'disabled' : ''}
+              disabled={isLoading && 'disabled'}
             />{' '}
           </label>
 
@@ -232,7 +238,7 @@ export default function App() {
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              disabled={isLoading ? 'disabled' : ''}
+              disabled={isLoading && 'disabled'}
             />
           </label>
           <button css={addButtonStyles} value="Add">
