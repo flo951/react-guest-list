@@ -146,6 +146,11 @@ export default function App() {
     const guestFind = copyGuestList.find(
       (guest) => guest.id === deletedGuest.id,
     );
+
+    if (typeof guestFind === 'undefined') {
+      setError('No Guest found');
+      return;
+    }
     const guestsToDisplay = guests.filter((guest) => guest.id !== guestFind.id);
     setGuests(guestsToDisplay);
     setCopyGuests(guestsToDisplay);
@@ -176,6 +181,10 @@ export default function App() {
     const updatedGuest = await response.json();
     const copyGuestList = [...guests];
     const guestFind = copyGuestList.find((guest) => guest.id === id);
+    if (typeof guestFind === 'undefined') {
+      setError('No Guest found');
+      return;
+    }
     guestFind.attending = updatedGuest.attending;
     setGuests(copyGuestList);
   };
