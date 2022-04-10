@@ -246,7 +246,7 @@ export default function App() {
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              disabled={isLoading && 'disabled'}
+              disabled={isLoading ? true : false}
             />{' '}
           </label>
 
@@ -257,7 +257,7 @@ export default function App() {
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              disabled={isLoading && 'disabled'}
+              disabled={isLoading ? true : false}
             />
           </label>
           <button css={addButtonStyles} value="Add">
