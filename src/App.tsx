@@ -98,6 +98,13 @@ type Props = {
   lastName: string;
 };
 
+type Guest = {
+  attending: boolean;
+  firstName: string;
+  id: number;
+  lastName: string;
+};
+
 function GuestList(props: Props) {
   return (
     <li css={listStyles} key={props.id}>
@@ -109,8 +116,8 @@ function GuestList(props: Props) {
 export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [guests, setGuests] = useState([]);
-  const [copyGuests, setCopyGuests] = useState([]);
+  const [guests, setGuests] = useState<Guest[]>([]);
+  const [copyGuests, setCopyGuests] = useState<Guest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
@@ -188,7 +195,7 @@ export default function App() {
   };
 
   // set attending & change attending status
-  const handleAttending = async (id, attending) => {
+  const handleAttending = async (id: number, attending: boolean) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'PUT',
       headers: {
