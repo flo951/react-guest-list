@@ -88,10 +88,6 @@ const listStyles = css`
   list-style-type: none;
 `;
 
-function List({ children }) {
-  return <ul css={listDivStyles}>{children}</ul>;
-}
-
 type Props = {
   id: number;
   firstName: string;
@@ -300,7 +296,7 @@ export default function App() {
         {isLoading ? (
           'Loading...'
         ) : (
-          <List>
+          <ul css={listDivStyles}>
             {guests.map((guest) => {
               return (
                 <div
@@ -340,7 +336,7 @@ export default function App() {
                 </div>
               );
             })}
-          </List>
+          </ul>
         )}
       </div>
     </>
