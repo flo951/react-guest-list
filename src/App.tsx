@@ -134,37 +134,6 @@ export default function App() {
     getGuests().catch((err) => console.log(err));
   }, []);
 
-  // send data to api
-  const sendGuest = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (firstName === '' || lastName === '') {
-      e.preventDefault();
-      setError('No valid Input');
-      return;
-    }
-    e.preventDefault();
-
-    const response = await fetch(`${baseUrl}/guests`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstName: firstName,
-        lastName: lastName,
-      }),
-    });
-    const createdGuest = await response.json();
-
-    // clean inputs
-    setFirstName('');
-    setLastName('');
-    console.log(guests);
-    const createdGuests = [...guests, createdGuest];
-    console.log(createdGuests);
-    setGuests(createdGuests);
-    setCopyGuests(createdGuests);
-  };
-
   // Remove guest by id
   const handleRemove = async (id: number) => {
     const response = await fetch(`${baseUrl}/guests/${id}`, {
@@ -226,7 +195,38 @@ export default function App() {
   return (
     <>
       <div css={formDivStyles}>
-        <form css={formStyles} onSubmit={sendGuest}>
+        <form
+          css={formStyles}
+          onSubmit={async (event) => {
+            if (firstName === '' || lastName === '') {
+              event.preventDefault();
+              setError('No valid Input');
+              return;
+            }
+            event.preventDefault();
+
+            const response = await fetch(`${baseUrl}/guests`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
+              }),
+            });
+            const createdGuest = await response.json();
+
+            // clean inputs
+            setFirstName('');
+            setLastName('');
+            console.log(guests);
+            const createdGuests = [...guests, createdGuest];
+            console.log(createdGuests);
+            setGuests(createdGuests);
+            setCopyGuests(createdGuests);
+          }}
+        >
           <h2>Guest List</h2>
 
           <label>
