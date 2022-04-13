@@ -315,17 +315,19 @@ export default function App() {
                           },
                         );
                         const updatedGuest = await response.json();
-                        console.log(updatedGuest);
-                        // const copyGuestList = [...guests];
-                        // const guestFind = copyGuestList.find(
-                        //   (guest) => guest.id === id,
-                        // );
-                        // if (typeof guestFind === 'undefined') {
-                        //   setError('No Guest found');
-                        //   return;
-                        // }
-                        // guestFind.attending = updatedGuest.attending;
-                        // setGuests(copyGuestList);
+
+                        const copyGuestList = [...guests];
+                        const guestFind = copyGuestList.filter(
+                          (findGuest) => findGuest.id !== updatedGuest.id,
+                        );
+
+                        if (typeof guestFind === 'undefined') {
+                          setError('No Guest found');
+                          return;
+                        }
+
+                        const newGuestList = [...guestFind, updatedGuest];
+                        setGuests(newGuestList);
                       }}
                     >
                       <li
