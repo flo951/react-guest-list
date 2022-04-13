@@ -362,6 +362,8 @@ export default function App() {
                         onClick={() => {
                           setEditGuest(true);
                           setEditGuestId(guest.id);
+                          setFirstNameOnEdit(guest.firstName);
+                          setLastNameOnEdit(guest.lastName);
                         }}
                       >
                         Edit
