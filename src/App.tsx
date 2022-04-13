@@ -103,6 +103,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [editGuest, setEditGuest] = useState(false);
+  const [firstNameOnEdit, setFirstNameOnEdit] = useState('');
+  const [lastNameOnEdit, setLastNameOnEdit] = useState('');
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
 
   // get all Guests on page load
@@ -327,8 +329,15 @@ export default function App() {
                         css={listStyles}
                         key={guest.firstName + guest.lastName + guest.id}
                       >
-                        Name: <input value={guest.firstName} />{' '}
-                        <input value={guest.lastName} />
+                        Name:{' '}
+                        <input
+                          onChange={(e) => setFirstNameOnEdit(e.target.value)}
+                          value={firstNameOnEdit}
+                        />{' '}
+                        <input
+                          onChange={(e) => setLastNameOnEdit(e.target.value)}
+                          value={lastNameOnEdit}
+                        />
                       </li>
                       <input type="submit" value="Save" />
                     </form>
