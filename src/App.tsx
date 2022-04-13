@@ -103,6 +103,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [editGuest, setEditGuest] = useState(false);
+  const [editGuestId, setEditGuestId] = useState(0);
   const [firstNameOnEdit, setFirstNameOnEdit] = useState('');
   const [lastNameOnEdit, setLastNameOnEdit] = useState('');
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
@@ -287,6 +288,9 @@ export default function App() {
         ) : (
           <ul css={listDivStyles}>
             {guests.map((guest) => {
+              {
+                const isDisabled = editGuestId !== guest.id;
+              }
               return (
                 <div
                   key={guest.id + guest.firstName + guest.lastName}
@@ -331,11 +335,15 @@ export default function App() {
                       >
                         Name:{' '}
                         <input
-                          onChange={(e) => setFirstNameOnEdit(e.target.value)}
+                          onChange={(e) =>
+                            setFirstNameOnEdit(e.currentTarget.value)
+                          }
                           value={firstNameOnEdit}
                         />{' '}
                         <input
-                          onChange={(e) => setLastNameOnEdit(e.target.value)}
+                          onChange={(e) =>
+                            setLastNameOnEdit(e.currentTarget.value)
+                          }
                           value={lastNameOnEdit}
                         />
                       </li>
@@ -352,6 +360,7 @@ export default function App() {
                       <button
                         onClick={() => {
                           setEditGuest(true);
+                          setEditGuestId(guest.id);
                         }}
                       >
                         Edit
