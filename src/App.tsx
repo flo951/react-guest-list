@@ -88,26 +88,12 @@ const listStyles = css`
   list-style-type: none;
 `;
 
-type Props = {
-  id: number;
-  firstName: string;
-  lastName: string;
-};
-
 type Guest = {
   attending: boolean;
   firstName: string;
   id: number;
   lastName: string;
 };
-
-// function GuestList(props: Props) {
-//   return (
-//     <li css={listStyles} key={props.id}>
-//       Name: {props.firstName} {props.lastName}
-//     </li>
-//   );
-// }
 
 export default function App() {
   const [firstName, setFirstName] = useState('');
@@ -116,6 +102,7 @@ export default function App() {
   const [copyGuests, setCopyGuests] = useState<Guest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editGuest, setEditGuest] = useState(false);
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
 
   // get all Guests on page load
@@ -304,35 +291,86 @@ export default function App() {
                   css={guestDivStyles}
                   data-test-id="guest"
                 >
-                  <li
-                    css={listStyles}
-                    key={guest.firstName + guest.lastName + guest.id}
-                  >
-                    Name: {guest.firstName} {guest.lastName}
-                  </li>
-
-                  <label>
-                    {guest.attending ? 'Is Attending' : 'Is not Attending'}
-                    <input
-                      aria-label="attending status"
-                      css={inputStyles}
-                      type="checkbox"
-                      checked={guest.attending}
-                      onChange={(e) => {
-                        handleAttending(
-                          guest.id,
-                          e.currentTarget.checked,
-                        ).catch((err) => console.log(err));
+                  {editGuest ? (
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        setEditGuest(false);
+                        const response = await fetch(
+                          `${baseUrl}/guests/${guest.id}`,
+                          {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                              firstName: firstName,
+                              lastName: lastName,
+                            }),
+                          },
+                        );
+                        const updatedGuest = await response.json();
+                        console.log(updatedGuest);
+                        // const copyGuestList = [...guests];
+                        // const guestFind = copyGuestList.find(
+                        //   (guest) => guest.id === id,
+                        // );
+                        // if (typeof guestFind === 'undefined') {
+                        //   setError('No Guest found');
+                        //   return;
+                        // }
+                        // guestFind.attending = updatedGuest.attending;
+                        // setGuests(copyGuestList);
                       }}
-                    />
-                  </label>
-                  <button
-                    aria-label="Remove"
-                    onClick={() => deleteGuest(guest.id)}
-                    css={buttonStyles}
-                  >
-                    Remove
-                  </button>
+                    >
+                      <li
+                        css={listStyles}
+                        key={guest.firstName + guest.lastName + guest.id}
+                      >
+                        Name: <input value={guest.firstName} />{' '}
+                        <input value={guest.lastName} />
+                      </li>
+                      <input type="submit" value="Save" />
+                    </form>
+                  ) : (
+                    <>
+                      <li
+                        css={listStyles}
+                        key={guest.firstName + guest.lastName + guest.id}
+                      >
+                        Name: {guest.firstName} {guest.lastName}
+                      </li>
+                      <button
+                        onClick={() => {
+                          setEditGuest(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <label>
+                        {guest.attending ? 'Is Attending' : 'Is not Attending'}
+                        <input
+                          aria-label="attending status"
+                          css={inputStyles}
+                          type="checkbox"
+                          checked={guest.attending}
+                          onChange={(e) => {
+                            handleAttending(
+                              guest.id,
+                              e.currentTarget.checked,
+                            ).catch((err) => console.log(err));
+                          }}
+                        />
+                      </label>
+                      <button
+                        aria-label="Remove"
+                        onClick={() => deleteGuest(guest.id)}
+                        css={buttonStyles}
+                      >
+                        Remove
+                      </button>
+                    </>
+                  )}
                 </div>
               );
             })}
