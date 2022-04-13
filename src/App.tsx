@@ -288,16 +288,15 @@ export default function App() {
         ) : (
           <ul css={listDivStyles}>
             {guests.map((guest) => {
-              {
-                const isDisabled = editGuestId !== guest.id;
-              }
+              const isEditable = editGuestId === guest.id;
+
               return (
                 <div
                   key={guest.id + guest.firstName + guest.lastName}
                   css={guestDivStyles}
                   data-test-id="guest"
                 >
-                  {editGuest ? (
+                  {editGuest && isEditable ? (
                     <form
                       onSubmit={async (e) => {
                         e.preventDefault();
@@ -310,8 +309,8 @@ export default function App() {
                               'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
-                              firstName: firstName,
-                              lastName: lastName,
+                              firstName: firstNameOnEdit,
+                              lastName: lastNameOnEdit,
                             }),
                           },
                         );
