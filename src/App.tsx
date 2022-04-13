@@ -101,13 +101,13 @@ type Guest = {
   lastName: string;
 };
 
-function GuestList(props: Props) {
-  return (
-    <li css={listStyles} key={props.id}>
-      Name: {props.firstName} {props.lastName}
-    </li>
-  );
-}
+// function GuestList(props: Props) {
+//   return (
+//     <li css={listStyles} key={props.id}>
+//       Name: {props.firstName} {props.lastName}
+//     </li>
+//   );
+// }
 
 export default function App() {
   const [firstName, setFirstName] = useState('');
@@ -304,12 +304,12 @@ export default function App() {
                   css={guestDivStyles}
                   data-test-id="guest"
                 >
-                  <GuestList
-                    key={guest.firstName + guest.lastName}
-                    firstName={guest.firstName}
-                    lastName={guest.lastName}
-                    id={guest.id}
-                  />
+                  <li
+                    css={listStyles}
+                    key={guest.firstName + guest.lastName + guest.id}
+                  >
+                    Name: {guest.firstName} {guest.lastName}
+                  </li>
 
                   <label>
                     {guest.attending ? 'Is Attending' : 'Is not Attending'}
