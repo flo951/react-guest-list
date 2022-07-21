@@ -75,7 +75,7 @@ const formStyles = css`
   background-color: #109dcc;
   padding: 1rem 2rem;
   border-radius: 1rem;
-  width: 30vw;
+  width: 70vw;
   border: 2px solid black;
 `;
 
