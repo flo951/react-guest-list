@@ -107,6 +107,45 @@ export default function App() {
   const [firstNameOnEdit, setFirstNameOnEdit] = useState('');
   const [lastNameOnEdit, setLastNameOnEdit] = useState('');
   const baseUrl = 'https://guest-list-random951.herokuapp.com';
+  const token = 'ExponentPushToken[3kafgzHODFQWVpMswr2fbX]';
+
+  async function sendPushNotification(expoPushToken: string) {
+    if (expoPushToken === '') {
+      alert('no valid token');
+      return;
+    }
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: 'hi from John',
+      body: 'external',
+      data: { someData: 'goes here' },
+    };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  }
+  useEffect(() => {
+    const getGuests = async () => {
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = (await response.json()) as Guest[];
+      const notificationGuests = allGuests.filter(
+        (guest) => guest.firstName === 'John',
+      );
+      console.log(notificationGuests);
+      if (notificationGuests.length > 0) {
+        await sendPushNotification(token);
+      }
+    };
+    getGuests().catch((err) => console.log(err));
+  }, [guests]);
 
   // get all Guests on page load
   useEffect(() => {
